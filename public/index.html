@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>2학기 수행평가 단어장</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@700;800&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap">
+<style>
+/* Layout: a single notebook column; word slots drawn as manuscript-paper (원고지) cells, one colour per 서론/본론/결론 */
+:root{
+  --paper:#f8f8f4; --card:#ffffff; --ink:#1c2420; --muted:#626d67; --line:#d9ded7; --soft:#eef1ec;
+  --accent:#1f5e4a; --accent-ink:#ffffff;
+  --intro:#2f5f9e; --body:#8a5a10; --concl:#8b3762;
+  --ok:#1f7a4d; --warn:#9a6400; --danger:#b3261e;
+  --display:"Nanum Myeongjo",Batang,"AppleMyungjo",serif;
+  --sans:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#121614; --card:#1a1f1d; --ink:#e4e9e5; --muted:#9aa49f; --line:#2d3532; --soft:#202724;
+  --accent:#6cc19f; --accent-ink:#0d1a14; --intro:#86abe6; --body:#e1b264; --concl:#e391ba;
+  --ok:#6fd39c; --warn:#e8b75a; --danger:#f2867e; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#121614; --card:#1a1f1d; --ink:#e4e9e5; --muted:#9aa49f; --line:#2d3532; --soft:#202724;
+  --accent:#6cc19f; --accent-ink:#0d1a14; --intro:#86abe6; --body:#e1b264; --concl:#e391ba;
+  --ok:#6fd39c; --warn:#e8b75a; --danger:#f2867e; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font:15px/1.6 var(--sans)}
+.wrap{max-width:960px;margin:0 auto;padding-inline:16px;padding-block:20px 64px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.3}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 20px;padding-bottom:16px;border-bottom:2px solid var(--ink);margin-bottom:24px}
+.eyebrow{font-size:12px;letter-spacing:.08em;color:var(--muted);font-weight:600}
+.top h1{font-size:28px;font-weight:800}
+.modes{display:flex;gap:4px;background:var(--soft);padding:4px;border-radius:10px}
+.modes button{border:0;background:transparent;padding:6px 14px;border-radius:7px;cursor:pointer;color:var(--muted);font-weight:500}
+.modes button[aria-pressed="true"]{background:var(--card);color:var(--ink);box-shadow:0 1px 2px rgb(0 0 0/.12)}
+
+.banner{border:1px solid var(--warn);color:var(--warn);background:var(--card);padding:10px 14px;border-radius:10px;margin-bottom:20px;font-size:14px}
+
+.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:24px}
+.login{max-width:420px;margin:24px auto 0;display:grid;gap:16px}
+.login p{margin:0;color:var(--muted);font-size:14px}
+.field{display:grid;gap:6px}
+.field label{font-size:13px;font-weight:600;color:var(--muted)}
+.field input,select,textarea{border:1px solid var(--line);background:var(--paper);border-radius:9px;padding:10px 12px;width:100%}
+.field input:focus,select:focus,textarea:focus{border-color:var(--accent);outline:none}
+.pin{letter-spacing:.5em;font-variant-numeric:tabular-nums}
+.err{color:var(--danger);font-size:14px;min-height:1.4em;margin:0}
+
+.btn{border:1px solid var(--line);background:var(--card);border-radius:9px;padding:9px 16px;cursor:pointer;font-weight:500}
+.btn:hover{border-color:var(--ink)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.danger{color:var(--danger);border-color:currentColor}
+.btn.danger.armed{background:var(--danger);color:var(--card)}
+.btn:disabled{opacity:.5;cursor:default}
+.btn.sm{padding:5px 10px;font-size:13px}
+.linkbtn{border:0;background:none;color:var(--muted);text-decoration:underline;cursor:pointer;padding:0;font-size:13px}
+
+.who{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px}
+.who .name{font-family:var(--display);font-size:22px;font-weight:800}
+.who .sid{color:var(--muted);font-variant-numeric:tabular-nums;margin-left:8px;font-size:14px}
+.tabs{display:flex;gap:20px;border-bottom:1px solid var(--line);margin-bottom:20px}
+.tabs button{border:0;background:none;padding:8px 0;cursor:pointer;color:var(--muted);font-weight:500;border-bottom:2px solid transparent;margin-bottom:-1px}
+.tabs button[aria-selected="true"]{color:var(--ink);border-color:var(--ink)}
+
+.sec{margin-bottom:28px;--c:var(--intro)}
+.sec[data-k="body"]{--c:var(--body)} .sec[data-k="concl"]{--c:var(--concl)}
+.sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:10px}
+.sec-head h2{font-size:21px;color:var(--c)}
+.sec-head .hint{color:var(--muted);font-size:13px;margin-left:10px;font-family:var(--sans)}
+.count{font-variant-numeric:tabular-nums;font-size:14px;color:var(--muted);white-space:nowrap}
+.count b{color:var(--c)}
+.meter{height:4px;background:var(--soft);border-radius:2px;overflow:hidden;margin-bottom:12px}
+.meter i{display:block;height:100%;background:var(--c);transition:width .25s}
+
+/* 원고지 cells */
+.grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));border-top:1.5px solid var(--c);border-left:1.5px solid var(--c)}
+.cell{position:relative;border-right:1.5px solid var(--c);border-bottom:1.5px solid var(--c);background:var(--card);min-width:0}
+.cell .no{position:absolute;top:3px;left:6px;font-size:10px;color:var(--c);font-variant-numeric:tabular-nums;opacity:.85;pointer-events:none}
+.cell input{width:100%;border:0;background:transparent;padding:18px 8px 9px;text-align:center;font-size:16px;min-width:0}
+.cell input:focus{outline:none;background:color-mix(in srgb,var(--c) 9%,transparent)}
+.cell.dup input{color:var(--danger)}
+.cell.dup::after{content:"중복";position:absolute;top:3px;right:6px;font-size:10px;color:var(--danger)}
+@media (max-width:640px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+
+.savebar{position:sticky;bottom:0;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin-top:8px;padding-bottom:calc(10px + env(safe-area-inset-bottom,0px))}
+.state{font-size:14px;color:var(--muted)}
+.state.dirty{color:var(--warn);font-weight:600}
+.state.saved{color:var(--ok)}
+
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--c);color:var(--c);border-radius:999px;padding:3px 11px;font-size:14px;display:inline-flex;gap:6px;align-items:baseline}
+.chip small{font-size:10px;opacity:.75;font-variant-numeric:tabular-nums}
+.chip.empty{border-style:dashed;color:var(--muted);border-color:var(--line)}
+
+/* admin */
+.stats{display:flex;flex-wrap:wrap;gap:8px 28px;margin-bottom:18px}
+.stat b{display:block;font-family:var(--display);font-size:26px;font-variant-numeric:tabular-nums;line-height:1.2}
+.stat span{font-size:12px;color:var(--muted);letter-spacing:.04em}
+.filters{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:14px}
+.filters select,.filters input{width:auto;min-width:0;padding:8px 10px}
+.filters input{flex:1 1 180px}
+.tablebox{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--card)}
+table{width:100%;border-collapse:collapse;font-size:14px;min-width:560px}
+th,td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font-size:12px;color:var(--muted);font-weight:600;letter-spacing:.04em;background:var(--soft)}
+td.num{font-variant-numeric:tabular-nums}
+tbody tr{cursor:pointer}
+tbody tr:hover{background:var(--soft)}
+tbody tr.sel{background:color-mix(in srgb,var(--accent) 12%,transparent)}
+.pill{display:inline-block;border-radius:999px;padding:1px 9px;font-size:12px;font-weight:600;border:1px solid}
+.pill.done{color:var(--ok)} .pill.part{color:var(--warn)} .pill.none{color:var(--muted)} .pill.reset{color:var(--danger)}
+.frac{font-variant-numeric:tabular-nums}
+.frac.full{color:var(--ok);font-weight:600}
+.empty-state{padding:28px;text-align:center;color:var(--muted)}
+.detail{margin-top:18px}
+.detail .sec{margin-bottom:18px}
+.detail .sec h3{font-size:17px;color:var(--c);margin-bottom:8px}
+.actions{display:flex;flex-wrap:wrap;gap:8px}
+details.roster{margin-top:28px}
+details.roster summary{cursor:pointer;font-weight:600}
+details.roster textarea{min-height:120px;margin:10px 0;font-variant-numeric:tabular-nums}
+.muted{color:var(--muted);font-size:13px}
+.view-all .sec{margin-bottom:14px}
+
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:10px 18px;border-radius:10px;font-size:14px;z-index:10;max-width:calc(100% - 32px)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+[hidden]{display:none!important}
+body{margin:0}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <div class="eyebrow">2026 · 1학년 2학기 수행평가</div>
+      <h1>서론 · 본론 · 결론 단어장</h1>
+    </div>
+    <nav class="modes" id="modes">
+      <button id="mStudent" aria-pressed="true">학생</button>
+      <button id="mTeacher" aria-pressed="false">교사 관리</button>
+    </nav>
+  </header>
+
+  <div class="banner" id="offline" hidden>서버에 연결하지 못했습니다. 인터넷 연결을 확인하고 새로고침해 주세요.</div>
+
+  <!-- 학생 로그인 -->
+  <section id="vLogin">
+    <form class="panel login" id="loginForm" autocomplete="off">
+      <h2>학생 로그인</h2>
+      <p>처음이라면 초기 비밀번호 <b>0000</b>으로 로그인한 뒤 새 비밀번호 4자리를 정하세요.</p>
+      <div class="field"><label for="inSid">학번 (5자리, 예: 10305)</label>
+        <input id="inSid" inputmode="numeric" maxlength="5" placeholder="10305" required></div>
+      <div class="field"><label for="inName">이름</label>
+        <input id="inName" maxlength="10" placeholder="홍길동" required></div>
+      <div class="field"><label for="inPin">비밀번호 4자리</label>
+        <input id="inPin" class="pin" type="password" inputmode="numeric" maxlength="4" placeholder="••••" required></div>
+      <p class="err" id="loginErr"></p>
+      <button class="btn primary" id="loginBtn" type="submit">로그인</button>
+    </form>
+  </section>
+
+  <!-- 비밀번호 변경 -->
+  <section id="vPw" hidden>
+    <form class="panel login" id="pwForm" autocomplete="off">
+      <h2>새 비밀번호 정하기</h2>
+      <p id="pwMsg">초기 비밀번호(0000)를 사용 중입니다. 나만 아는 숫자 4자리로 바꿔 주세요.</p>
+      <div class="field"><label for="inPw1">새 비밀번호</label>
+        <input id="inPw1" class="pin" type="password" inputmode="numeric" maxlength="4" required></div>
+      <div class="field"><label for="inPw2">한 번 더 입력</label>
+        <input id="inPw2" class="pin" type="password" inputmode="numeric" maxlength="4" required></div>
+      <p class="err" id="pwErr"></p>
+      <button class="btn primary" type="submit">비밀번호 저장</button>
+    </form>
+  </section>
+
+  <!-- 학생 화면 -->
+  <section id="vStudent" hidden>
+    <div class="who">
+      <div><span class="name" id="stName"></span><span class="sid" id="stSid"></span></div>
+      <div class="actions">
+        <button class="linkbtn" id="toPw">비밀번호 변경</button>
+        <button class="btn sm" id="logout">로그아웃</button>
+      </div>
+    </div>
+    <div class="tabs" role="tablist">
+      <button role="tab" id="tWrite" aria-selected="true">단어 입력</button>
+      <button role="tab" id="tView" aria-selected="false">내 단어 확인</button>
+    </div>
+    <div id="writePane">
+      <div id="secInputs"></div>
+      <div class="savebar">
+        <span class="state" id="saveState">저장됨</span>
+        <button class="btn primary" id="saveBtn">저장하기</button>
+      </div>
+    </div>
+    <div id="viewPane" class="view-all" hidden></div>
+  </section>
+
+  <!-- 교사 로그인 -->
+  <section id="vTeachLogin" hidden>
+    <form class="panel login" id="teachForm" autocomplete="off">
+      <h2>교사 관리 로그인</h2>
+      <p>교사 비밀번호를 입력하면 학생 조회와 비밀번호 초기화, 엑셀 내려받기를 할 수 있습니다.</p>
+      <div class="field"><label for="inTeach">교사 비밀번호</label>
+        <input id="inTeach" type="password" maxlength="40" required></div>
+      <p class="err" id="teachErr"></p>
+      <button class="btn primary" type="submit">관리 화면 열기</button>
+    </form>
+  </section>
+
+  <!-- 교사 관리 -->
+  <section id="vAdmin" hidden>
+    <div class="stats" id="stats"></div>
+    <div class="filters">
+      <select id="fScope" aria-label="조회 범위">
+        <option value="all">전체 조회</option>
+        <option value="class">반별 조회</option>
+        <option value="one">학생별 조회</option>
+      </select>
+      <select id="fClass" aria-label="반 선택" hidden></select>
+      <input id="fQ" placeholder="학번 또는 이름 검색" aria-label="학생 검색" hidden>
+      <button class="btn" id="refreshBtn">새로고침</button>
+      <button class="btn" id="xlsxBtn">엑셀로 내려받기</button>
+      <button class="linkbtn" id="teachOut">관리 화면 잠그기</button>
+    </div>
+    <div class="tablebox">
+      <table>
+        <thead><tr><th>학번</th><th>이름</th><th>서론</th><th>본론</th><th>결론</th><th>상태</th><th>최근 저장</th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+      <div class="empty-state" id="noRows" hidden>아직 로그인한 학생이 없습니다. 학생이 학번·이름·0000으로 처음 로그인하면 여기에 나타납니다.</div>
+    </div>
+    <div class="panel detail" id="detail" hidden></div>
+
+    <details class="roster">
+      <summary>명단 미리 등록하기</summary>
+      <p class="muted">한 줄에 한 명씩 "학번 이름"을 붙여 넣으세요. 이미 등록된 학번은 건너뜁니다. 미리 등록하면 학생이 다른 이름으로 로그인할 수 없습니다.</p>
+      <textarea id="rosterText" placeholder="10101 김민준&#10;10102 이서연"></textarea>
+      <button class="btn" id="rosterBtn">명단 등록</button>
+      <span class="muted" id="rosterMsg"></span>
+    </details>
+  </section>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

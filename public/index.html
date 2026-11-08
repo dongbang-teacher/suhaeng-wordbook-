@@ -93,6 +93,79 @@ button,input,select,textarea{font:inherit;color:inherit}
 .state{font-size:14px;color:var(--muted)}
 .state.dirty{color:var(--warn);font-weight:600}
 .state.saved{color:var(--ok)}
+.state.closed{color:var(--danger);font-weight:600}
+.banner.info{border-color:var(--line);color:var(--muted)}
+.banner.info b{color:var(--ink)}
+.banner.closed{border-color:var(--danger);color:var(--danger);font-weight:600}
+.cell input:disabled{color:var(--muted);cursor:not-allowed}
+.dlbox{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:18px}
+.dlbox .lbl{font-weight:600;font-size:14px}
+.dlbox input{width:auto;border:1px solid var(--line);background:var(--paper);border-radius:9px;padding:6px 10px}
+.dlbox .st{font-size:13px;font-weight:600}
+.dlbox .st.open{color:var(--ok)} .dlbox .st.closed{color:var(--danger)}
+/* 학생 로그인 차단 안내 */
+.closed-box{border:1px solid var(--danger);color:var(--danger);border-radius:10px;padding:14px;font-weight:600;text-align:center;line-height:1.5}
+.dlbox .sep{flex-basis:100%;height:0}
+.dlbox select{width:auto;padding:6px 10px}
+
+/* ---------- 출력 레이아웃 ---------- */
+#printArea{display:none}
+body.printing .wrap{display:none}
+body.printing #printArea{display:block}
+.pbar{position:sticky;top:0;z-index:5;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;background:var(--card);border-bottom:1px solid var(--line);padding:10px 16px}
+.pbar b{font-size:15px}
+.pbar .muted{margin-left:8px}
+#printPages{padding:20px 16px 60px;display:grid;justify-items:center;gap:20px;background:var(--soft);min-height:100vh}
+@media screen{
+  #printPages .pp{width:210mm;max-width:100%;min-height:297mm;padding:12mm;box-shadow:0 2px 10px rgb(0 0 0/.15);border-radius:2px}
+  @media (max-width:820px){#printPages .pp{min-height:0;padding:16px}}
+}
+@media print{
+  @page{size:A4 portrait;margin:12mm}
+  html,body{background:#fff!important;color:#1c2420!important}
+  body.printing .wrap,body.printing .toast,.pbar{display:none!important}
+  #printPages{padding:0;background:#fff;display:block;min-height:0}
+}
+.pp{font-family:"IBM Plex Sans KR","Malgun Gothic","Apple SD Gothic Neo",sans-serif;color:#1c2420;background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact;break-after:page;page-break-after:always}
+.pp:last-child{break-after:auto;page-break-after:auto}
+.pp-hd{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;border-bottom:2px solid #1c2420;padding-bottom:10px;margin-bottom:14px}
+.pp-eye{font-size:10.5px;letter-spacing:.06em;color:#626d67;font-weight:600}
+.pp-title{font-family:"Nanum Myeongjo",Batang,serif;font-size:23px;font-weight:800;margin:2px 0 0;line-height:1.25}
+.pp-who{text-align:right;line-height:1.25}
+.pp-cls{font-size:12px;color:#626d67;font-weight:600}
+.pp-name{font-family:"Nanum Myeongjo",Batang,serif;font-size:24px;font-weight:800}
+.pp-sid{font-size:11px;color:#626d67;font-variant-numeric:tabular-nums}
+.pp-sum{display:grid;grid-template-columns:repeat(5,1fr);border:1px solid #d9ded7;border-radius:8px;margin-bottom:14px;overflow:hidden}
+.pp-sumc{padding:6px 10px;border-right:1px solid #d9ded7;display:flex;justify-content:space-between;align-items:baseline;font-size:11.5px;color:#626d67}
+.pp-sumc:last-child{border-right:0}
+.pp-sumc b{font-size:14px;color:var(--c,#1c2420);font-variant-numeric:tabular-nums}
+.pp-tot{background:#f3f5f1}
+.pp-sec{margin-bottom:13px}
+.pp-sech{display:flex;align-items:baseline;gap:10px;border-left:4px solid var(--c);padding-left:8px;margin-bottom:6px}
+.pp-sech b{font-family:"Nanum Myeongjo",Batang,serif;font-size:17px;color:var(--c)}
+.pp-sech span{font-size:11px;color:#626d67}
+.pp-grid{display:grid;grid-template-columns:repeat(5,1fr);border-top:1.2px solid var(--c);border-left:1.2px solid var(--c)}
+.pp-cell{position:relative;border-right:1.2px solid var(--c);border-bottom:1.2px solid var(--c);height:17mm;display:flex;align-items:center;justify-content:center;padding:10px 6px 4px;min-width:0}
+.pp-cell i{position:absolute;top:3px;left:5px;font-style:normal;font-size:9px;color:var(--c);font-variant-numeric:tabular-nums}
+.pp-cell span{font-size:13.5px;text-align:center;overflow-wrap:anywhere;line-height:1.2}
+.pp-cell.empty{background:#fafbf9}
+.pp-ft{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin-top:16px;padding-top:10px;border-top:1px solid #d9ded7}
+.pp-meta{font-size:10px;color:#626d67;line-height:1.6}
+.pp-sign{display:flex;align-items:flex-end;gap:8px;font-size:11.5px;color:#1c2420}
+.pp-sign i{display:inline-block;width:32mm;border-bottom:1px solid #1c2420;height:16px;margin-right:10px}
+.pp-stats{display:flex;gap:18px;text-align:center}
+.pp-stats b{display:block;font-family:"Nanum Myeongjo",Batang,serif;font-size:20px;line-height:1.1}
+.pp-stats span{font-size:10.5px;color:#626d67}
+.pp-table{width:100%;border-collapse:collapse;font-size:11.5px;min-width:0}
+.pp-table th{background:#eef1ec;color:#1c2420;font-size:10.5px;font-weight:600;padding:6px 6px;border:1px solid #c9cfc7;text-align:center;letter-spacing:0}
+.pp-table td{padding:5px 6px;border:1px solid #d9ded7;text-align:center;font-variant-numeric:tabular-nums;white-space:nowrap}
+.pp-table td:nth-child(3){font-weight:600}
+.pp-table td:last-child{width:22mm}
+.pp-table tr{break-inside:avoid}
+.pp-table thead{display:table-header-group}
+.pp-table .st-done{color:#1f7a4d;font-weight:600}.pp-table .st-part{color:#9a6400;font-weight:600}.pp-table .st-none{color:#b3261e}
+.pp-ftc{display:block;font-size:10px;color:#626d67}
+
 
 .chips{display:flex;flex-wrap:wrap;gap:6px}
 .chip{border:1px solid var(--c);color:var(--c);border-radius:999px;padding:3px 11px;font-size:14px;display:inline-flex;gap:6px;align-items:baseline}
@@ -156,6 +229,9 @@ body{margin:0}
     <form class="panel login" id="loginForm" autocomplete="off">
       <h2>학생 로그인</h2>
       <p>처음이라면 초기 비밀번호 <b>0000</b>으로 로그인한 뒤 새 비밀번호 4자리를 정하세요.</p>
+      <p id="loginDl"></p>
+      <div class="closed-box" id="loginClosed" hidden>지금은 학생 로그인이 닫혀 있습니다.<br>수행평가 단어 입력 기간이 끝났습니다. 궁금한 점은 선생님께 문의하세요.</div>
+      <div id="loginFields" style="display:grid;gap:16px">
       <div class="field"><label for="inSid">학번 (5자리, 예: 10305)</label>
         <input id="inSid" inputmode="numeric" maxlength="5" placeholder="10305" required></div>
       <div class="field"><label for="inName">이름</label>
@@ -164,6 +240,7 @@ body{margin:0}
         <input id="inPin" class="pin" type="password" inputmode="numeric" maxlength="4" placeholder="••••" required></div>
       <p class="err" id="loginErr"></p>
       <button class="btn primary" id="loginBtn" type="submit">로그인</button>
+      </div>
     </form>
   </section>
 
@@ -190,6 +267,7 @@ body{margin:0}
         <button class="btn sm" id="logout">로그아웃</button>
       </div>
     </div>
+    <div class="banner info" id="dlNote"></div>
     <div class="tabs" role="tablist">
       <button role="tab" id="tWrite" aria-selected="true">단어 입력</button>
       <button role="tab" id="tView" aria-selected="false">내 단어 확인</button>
@@ -218,6 +296,20 @@ body{margin:0}
 
   <!-- 교사 관리 -->
   <section id="vAdmin" hidden>
+    <div class="dlbox">
+      <span class="lbl">학생 입력 마감</span>
+      <input type="datetime-local" id="dlInput" aria-label="입력 마감 일시">
+      <button class="btn sm" id="dlSave">마감 일시 저장</button>
+      <span class="st" id="dlState"></span>
+      <span class="sep"></span>
+      <span class="lbl">학생 로그인</span>
+      <select id="loginMode" aria-label="학생 로그인 설정">
+        <option value="auto">자동 (마감 후 차단)</option>
+        <option value="closed">차단</option>
+        <option value="open">허용</option>
+      </select>
+      <span class="st" id="loginState"></span>
+    </div>
     <div class="stats" id="stats"></div>
     <div class="filters">
       <select id="fScope" aria-label="조회 범위">
@@ -229,11 +321,14 @@ body{margin:0}
       <input id="fQ" placeholder="학번 또는 이름 검색" aria-label="학생 검색" hidden>
       <button class="btn" id="refreshBtn">새로고침</button>
       <button class="btn" id="xlsxBtn">엑셀로 내려받기</button>
+      <button class="btn primary" id="printListBtn">현황표 출력</button>
+      <button class="btn primary" id="printAllBtn">학생별 모아 출력</button>
       <button class="linkbtn" id="teachOut">관리 화면 잠그기</button>
     </div>
+    <p class="muted" style="margin:-6px 0 14px"><b>현황표 출력</b>은 지금 보이는 명단을 표로, <b>학생별 모아 출력</b>은 보이는 학생 모두를 A4 한 장에 한 명씩 인쇄합니다. 반별 조회 후 누르면 그 반만 나옵니다. 한 명만 뽑으려면 명단의 <b>출력</b> 버튼을 누르세요.</p>
     <div class="tablebox">
       <table>
-        <thead><tr><th>학번</th><th>이름</th><th>서론</th><th>본론</th><th>결론</th><th>상태</th><th>최근 저장</th></tr></thead>
+        <thead><tr><th>학번</th><th>이름</th><th>서론</th><th>본론</th><th>결론</th><th>상태</th><th>최근 저장</th><th>출력</th></tr></thead>
         <tbody id="rows"></tbody>
       </table>
       <div class="empty-state" id="noRows" hidden>아직 로그인한 학생이 없습니다. 학생이 학번·이름·0000으로 처음 로그인하면 여기에 나타납니다.</div>
@@ -250,6 +345,11 @@ body{margin:0}
   </section>
 </div>
 <div class="toast" id="toast" hidden></div>
+<div id="printArea">
+  <div class="pbar"><div><b>인쇄 미리보기</b><span class="muted" id="printInfo"></span></div>
+    <div class="actions"><button class="btn primary" id="printGo">인쇄하기</button><button class="btn" id="printClose">닫기</button></div></div>
+  <div id="printPages"></div>
+</div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="app.js"></script>

@@ -1,7 +1,7 @@
 import { getStudent, putStudent, hasStore, failures, addFailure, clearFailures } from '../lib/store.js';
 import {
   send, isSid, isPin, cleanName, INIT, newStudent, publicView, normWords,
-  hashPin, studentToken, studentFrom,
+  hashPin, studentToken, studentFrom, deadlineInfo,
 } from '../lib/common.js';
 
 const MAX_FAILS = 10;
@@ -12,14 +12,20 @@ export default async function handler(req, res) {
   const b = req.body || {};
   try {
     switch (b.action) {
+      case 'config': return send(res, 200, await deadlineInfo());
+    }
+    const dl = await deadlineInfo();
+    if (!dl.loginOpen) return send(res, 403, { error: '지금은 학생 로그인이 닫혀 있습니다. 선생님께 문의하세요.', ...dl });
+    switch (b.action) {
       case 'login': return await login(b, res);
       case 'me': {
         const s = await studentFrom(req);
-        return s ? send(res, 200, { student: publicView(s) }) : send(res, 401, { error: '다시 로그인해 주세요.' });
+        return s ? send(res, 200, { student: publicView(s), ...(await deadlineInfo()) }) : send(res, 401, { error: '다시 로그인해 주세요.' });
       }
       case 'save': {
         const s = await studentFrom(req);
         if (!s) return send(res, 401, { error: '로그인이 끝났습니다. 다시 로그인한 뒤 저장하세요.' });
+        if (dl.closed) return send(res, 403, { error: '입력이 마감되어 저장할 수 없습니다.', ...dl });
         s.words = normWords(b.words);
         s.updatedAt = new Date().toISOString();
         await putStudent(s);
@@ -65,5 +71,5 @@ async function login(b, res) {
     return send(res, 401, { error: '비밀번호가 틀렸습니다. 기억나지 않으면 선생님께 초기화를 요청하세요.' });
   }
   await clearFailures(key);
-  return send(res, 200, { token: studentToken(s), student: publicView(s), mustChange: pin === INIT });
+  return send(res, 200, { token: studentToken(s), student: publicView(s), mustChange: pin === INIT, ...(await deadlineInfo()) });
 }

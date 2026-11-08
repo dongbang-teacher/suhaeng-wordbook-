@@ -1,7 +1,7 @@
-import { getStudent, putStudent, deleteStudent, allStudents, hasStore, failures, addFailure, clearFailures } from '../lib/store.js';
+import { getStudent, putStudent, deleteStudent, allStudents, hasStore, failures, addFailure, clearFailures, getConfig, putConfig } from '../lib/store.js';
 import {
   send, isSid, cleanName, INIT, newStudent, publicView, hashPin,
-  teacherPasswordOk, teacherToken, isTeacher, hasTeacherPassword,
+  teacherPasswordOk, teacherToken, isTeacher, hasTeacherPassword, deadlineInfo,
 } from '../lib/common.js';
 
 const MAX_FAILS = 20;
@@ -27,7 +27,23 @@ export default async function handler(req, res) {
     switch (b.action) {
       case 'list': {
         const list = (await allStudents()).map(publicView).sort((a, c) => a.sid.localeCompare(c.sid));
-        return send(res, 200, { students: list });
+        return send(res, 200, { students: list, ...(await deadlineInfo()) });
+      }
+      case 'deadline': {
+        const t = Date.parse(b.deadline);
+        if (Number.isNaN(t)) return send(res, 400, { error: '마감 일시가 올바르지 않습니다.' });
+        const c = await getConfig();
+        await putConfig({ ...c, deadline: new Date(t).toISOString(), deadlineUpdatedAt: new Date().toISOString() });
+        return send(res, 200, await deadlineInfo());
+      }
+      case 'access': {
+        const mode = ['open', 'closed', 'auto'].includes(b.mode) ? b.mode : null;
+        if (!mode) return send(res, 400, { error: '설정 값이 올바르지 않습니다.' });
+        const c = await getConfig();
+        const next = { ...c, studentLoginUpdatedAt: new Date().toISOString() };
+        if (mode === 'auto') delete next.studentLogin; else next.studentLogin = mode;
+        await putConfig(next);
+        return send(res, 200, await deadlineInfo());
       }
       case 'reset': {
         const s = isSid(b.sid) && (await getStudent(b.sid));

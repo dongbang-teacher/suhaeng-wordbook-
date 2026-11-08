@@ -5,7 +5,7 @@ const SECS=[
 const N=15, INIT='0000';
 const $=id=>document.getElementById(id);
 let me=null, draft=null, dirty=false, stToken=null, tToken=null;
-let all=[], selSid=null, pollT=null;
+let all=[], selSid=null, pollT=null, editing=null;
 let deadline=Date.parse('2026-11-08T23:59:59+09:00'), skew=0, lockedNow=null, loginOpen=true, loginMode='auto';
 
 /* ---------- helpers ---------- */
@@ -293,7 +293,7 @@ function renderAdmin(){
     if(s.initialPw){const p=document.createElement('span');p.className='pill reset';p.style.marginLeft='6px';p.textContent='초기 비번';tr.children[5].appendChild(p)}
     tr.children[6].textContent=fmtTime(s.updatedAt);
     const pbt=el('button','btn sm','출력');pbt.onclick=ev=>{ev.stopPropagation();printStudent(s)};tr.children[7].appendChild(pbt);
-    tr.onclick=()=>{selSid=s.sid;renderAdmin()};
+    tr.onclick=()=>{if(editing&&editing.dirty&&editing.sid!==s.sid)return toast('수정 중인 단어를 먼저 저장하거나 취소하세요.');if(editing&&editing.sid!==s.sid)editing=null;selSid=s.sid;renderAdmin()};
     tb.appendChild(tr);
   }
   const noRows=$('noRows');
@@ -310,15 +310,19 @@ function armed(btn,label,fn){
 }
 function renderDetail(){
   const box=$('detail'), s=all.find(x=>x.sid===selSid);
-  if(!s){box.hidden=true;return}
+  if(!s){box.hidden=true;editing=null;return}
+  if(editing&&editing.sid===s.sid){if(box.dataset.edit!==s.sid)renderEditor(box,s);return}
+  delete box.dataset.edit;
   box.hidden=false;box.textContent='';
   const p=parseSid(s.sid);
   const head=document.createElement('div');head.className='who';
   const nm=document.createElement('div');
   const a=document.createElement('span');a.className='name';a.textContent=s.name;
-  const b=document.createElement('span');b.className='sid';b.textContent=`${p.cls}반 ${p.num}번 · ${s.sid} · 최근 저장 ${fmtTime(s.updatedAt)}`;
+  const b=document.createElement('span');b.className='sid';b.textContent=`${p.cls}반 ${p.num}번 · ${s.sid} · 최근 저장 ${fmtTime(s.updatedAt)}`+(s.teacherEditedAt?` · 교사 수정 ${fmtTime(s.teacherEditedAt)}`:'');
   nm.append(a,b);
   const act=document.createElement('div');act.className='actions';
+  const eb=document.createElement('button');eb.className='btn primary sm';eb.textContent='단어 수정·입력';
+  eb.onclick=()=>{editing={sid:s.sid,draft:norm(s.words),dirty:false};renderDetail()};
   const rb=document.createElement('button');rb.className='btn danger sm';rb.textContent='비밀번호 0000으로 초기화';
   armed(rb,'한 번 더 누르면 초기화',async()=>{
     try{await api('teacher',{action:'reset',sid:s.sid},tToken);toast(`${s.name} 학생의 비밀번호를 0000으로 초기화했습니다.`);await loadAll()}catch(e){toast(e.error)}
@@ -330,10 +334,64 @@ function renderDetail(){
   const pb=document.createElement('button');pb.className='btn sm';pb.textContent='이 학생 출력';
   pb.onclick=()=>printStudent(s);
   const close=document.createElement('button');close.className='btn sm';close.textContent='닫기';close.onclick=()=>{selSid=null;renderAdmin()};
-  act.append(pb,rb,del,close);head.append(nm,act);
+  act.append(eb,pb,rb,del,close);head.append(nm,act);
   const words=document.createElement('div');renderWords(words,s.words,false);
   box.append(head,words);
 }
+
+/* ---------- 교사 단어 편집 ---------- */
+function renderEditor(box,s){
+  box.dataset.edit=s.sid;box.textContent='';
+  const p=parseSid(s.sid), d=editing.draft;
+  const head=el('div','who');
+  const nm=el('div');nm.append(el('span','name',s.name),el('span','sid',`${p.cls}반 ${p.num}번 · ${s.sid} · 단어 수정 중`));
+  const act=el('div','actions');
+  const clr=el('button','btn danger sm','45칸 모두 비우기');
+  armed(clr,'한 번 더 누르면 모두 비움',async()=>{for(const x of SECS)d[x.k]=Array(N).fill('');editing.dirty=true;renderEditor(box,s)});
+  act.append(clr);head.append(nm,act);box.appendChild(head);
+  box.appendChild(el('p','muted edit-help','칸을 고치면 수정, 지우면 삭제, 빈칸에 쓰면 입력됩니다. 마감·로그인 차단과 관계없이 저장되며, 학생 화면에도 바로 반영됩니다.'));
+  const bar=el('div','savebar edit-bar');
+  const state=el('span','state',editing.dirty?'저장하지 않은 변경이 있습니다':'변경 없음');if(editing.dirty)state.className='state dirty';
+  const setDirty=()=>{editing.dirty=true;state.textContent='저장하지 않은 변경이 있습니다';state.className='state dirty'};
+  for(const x of SECS){
+    const sec=el('div','sec');sec.dataset.k=x.k;
+    const sh=el('div','sec-head');const h=el('h3','',x.label);
+    const cnt=el('span','count');const cb=el('b','',filled(d[x.k]));cnt.append(cb,` / ${N}`);
+    const cl=el('button','linkbtn','이 영역 비우기');cl.style.marginLeft='12px';
+    cl.onclick=()=>{d[x.k]=Array(N).fill('');setDirty();sec.querySelectorAll('input').forEach(i=>i.value='');cb.textContent=0;refreshEdit(sec,d[x.k])};
+    h.appendChild(cl);sh.append(h,cnt);sec.appendChild(sh);
+    const grid=el('div','grid');
+    for(let i=0;i<N;i++){
+      const cell=el('label','cell');cell.appendChild(el('span','no',i+1));
+      const inp=el('input');inp.maxLength=20;inp.value=d[x.k][i];inp.id=`e-${x.k}-${i}`;inp.setAttribute('aria-label',`${x.label} ${i+1}번 단어`);
+      inp.oninput=()=>{d[x.k][i]=inp.value;setDirty();cb.textContent=filled(d[x.k]);refreshEdit(sec,d[x.k])};
+      inp.onkeydown=ev=>{if(ev.key==='Enter'){ev.preventDefault();const nx=i<N-1&&document.getElementById(`e-${x.k}-${i+1}`);if(nx)nx.focus()}};
+      cell.appendChild(inp);grid.appendChild(cell);
+    }
+    sec.appendChild(grid);box.appendChild(sec);refreshEdit(sec,d[x.k]);
+  }
+  const btns=el('div','actions');
+  const cancel=el('button','btn','취소');
+  cancel.onclick=()=>{if(editing.dirty&&!cancel.dataset.armed){cancel.dataset.armed='1';cancel.textContent='저장 안 하고 닫기';setTimeout(()=>{delete cancel.dataset.armed;cancel.textContent='취소'},4000);return}editing=null;renderDetail()};
+  const save=el('button','btn primary','저장하기');
+  save.onclick=async()=>{
+    save.disabled=true;
+    try{
+      const words={};for(const x of SECS)words[x.k]=d[x.k].map(v=>v.trim());
+      const r=await api('teacher',{action:'words',sid:s.sid,words},tToken);
+      const i=all.findIndex(x=>x.sid===s.sid);if(i>=0)all[i]=r.student;
+      editing=null;toast(`${s.name} 학생의 단어를 저장했습니다. (${SECS.reduce((a,x)=>a+filled(r.student.words[x.k]),0)} / ${N*3})`);renderAdmin();
+    }catch(e){toast(e.error);if(e.status===401)loadAll()}
+    finally{save.disabled=false}
+  };
+  btns.append(cancel,save);bar.append(state,btns);box.appendChild(bar);
+  box.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function refreshEdit(sec,arr){
+  const seen={};arr.forEach(w=>{const t=w.trim();if(t)seen[t]=(seen[t]||0)+1});
+  sec.querySelectorAll('.cell').forEach((c,i)=>c.classList.toggle('dup',!!arr[i].trim()&&seen[arr[i].trim()]>1));
+}
+window.addEventListener('beforeunload',e=>{if(editing&&editing.dirty){e.preventDefault();e.returnValue=''}});
 
 /* ---------- excel export (current view) ---------- */
 $('xlsxBtn').onclick=()=>{

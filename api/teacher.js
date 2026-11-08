@@ -1,6 +1,6 @@
 import { getStudent, putStudent, deleteStudent, allStudents, hasStore, failures, addFailure, clearFailures, getConfig, putConfig } from '../lib/store.js';
 import {
-  send, isSid, cleanName, INIT, newStudent, publicView, hashPin,
+  send, isSid, cleanName, INIT, newStudent, publicView, hashPin, normWords,
   teacherPasswordOk, teacherToken, isTeacher, hasTeacherPassword, deadlineInfo,
 } from '../lib/common.js';
 
@@ -44,6 +44,17 @@ export default async function handler(req, res) {
         if (mode === 'auto') delete next.studentLogin; else next.studentLogin = mode;
         await putConfig(next);
         return send(res, 200, await deadlineInfo());
+      }
+      case 'words': {
+        // 교사가 학생 단어를 직접 수정·삭제·입력 (마감·로그인 차단과 관계없이 가능)
+        const s = isSid(b.sid) && (await getStudent(b.sid));
+        if (!s) return send(res, 404, { error: '학생을 찾을 수 없습니다.' });
+        const now = new Date().toISOString();
+        s.words = normWords(b.words);
+        s.updatedAt = now;
+        s.teacherEditedAt = now;
+        await putStudent(s);
+        return send(res, 200, { student: publicView(s) });
       }
       case 'reset': {
         const s = isSid(b.sid) && (await getStudent(b.sid));
